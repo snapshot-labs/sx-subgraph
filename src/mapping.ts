@@ -76,10 +76,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
       let title = obj.get('title')
       let body = obj.get('body')
       let discussion = obj.get('discussion')
+      let execution = obj.get('execution')
 
       if (title) proposal.title = title.toString()
       if (body) proposal.body = body.toString()
       if (discussion) proposal.discussion = discussion.toString()
+      if (execution) proposal.execution = execution.toString()
     }
   }
 
