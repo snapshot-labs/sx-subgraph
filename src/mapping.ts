@@ -1,5 +1,5 @@
 import { Address, BigDecimal, Bytes, ipfs, json } from '@graphprotocol/graph-ts'
-import { JSON } from 'assemblyscript-json';
+import { JSON } from 'assemblyscript-json'
 import { ProposalCreated, VoteCreated, MetadataUriUpdated } from '../generated/Space/Space'
 import { Space, Proposal, Vote, User } from '../generated/schema'
 
