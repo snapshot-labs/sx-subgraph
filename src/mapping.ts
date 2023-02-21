@@ -8,7 +8,7 @@ import { Space, Proposal, Vote, User } from '../generated/schema'
 export function handleSpaceCreated(event: SpaceCreated): void {
   let space = new Space(event.params.space.toHexString())
   space.name = 'Fellow DAO ' + event.params.space.toHexString().slice(0, 6)
-  space.description = ''
+  space.about = ''
   space.controller = event.params.owner
   space.voting_delay = event.params.votingDelay.toI32()
   space.min_voting_period = event.params.minVotingDuration.toI32()
@@ -171,7 +171,7 @@ export function handleMetadataUriUpdated(event: MetadataUriUpdated): void {
       let properties = obj.get('properties')
 
       if (name) space.name = name.toString()
-      if (description) space.description = description.toString()
+      if (description) space.about = description.toString()
       if (externalUrl) space.external_url = externalUrl.toString()
 
       if (properties) {
