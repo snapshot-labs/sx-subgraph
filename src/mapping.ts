@@ -8,7 +8,7 @@ import { Space, Proposal, Vote, User } from '../generated/schema'
 export function handleSpaceCreated(event: SpaceCreated): void {
   let space = new Space(event.params.space.toHexString())
   space.name = 'Fellow DAO ' + event.params.space.toHexString().slice(0, 6)
-  space.about = ''
+  space.description = ''
   space.controller = event.params.owner
   space.voting_delay = event.params.votingDelay.toI32()
   space.min_voting_period = event.params.minVotingDuration.toI32()
@@ -165,11 +165,28 @@ export function handleMetadataUriUpdated(event: MetadataUriUpdated): void {
     if (data !== null) {
       let value = json.try_fromBytes(data as Bytes)
       let obj = value.value.toObject()
-      let title = obj.get('name')
+      let name = obj.get('name')
       let description = obj.get('description')
+      let externalUrl = obj.get('external_url')
+      let properties = obj.get('properties')
 
-      if (title) space.name = title.toString()
-      if (description) space.about = description.toString()
+      if (name) space.name = name.toString()
+      if (description) space.description = description.toString()
+      if (externalUrl) space.external_url = externalUrl.toString()
+
+      if (properties) {
+        const propertiesObj = properties.toObject()
+
+        let githubUrl = propertiesObj.get('github_url')
+        let twitterUrl = propertiesObj.get('twitter_url')
+        let discordUrl = propertiesObj.get('discord_url')
+        let treasuryAddress = propertiesObj.get('treasury_address')
+
+        if (githubUrl) space.github_url = githubUrl.toString()
+        if (twitterUrl) space.twitter_url = twitterUrl.toString()
+        if (discordUrl) space.discord_url = discordUrl.toString()
+        if (treasuryAddress) space.treasury_address = treasuryAddress.toString()
+      }
     }
   }
 
