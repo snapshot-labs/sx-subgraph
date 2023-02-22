@@ -177,15 +177,15 @@ export function handleMetadataUriUpdated(event: MetadataUriUpdated): void {
       if (properties) {
         const propertiesObj = properties.toObject()
 
-        let githubUrl = propertiesObj.get('github_url')
-        let twitterUrl = propertiesObj.get('twitter_url')
-        let discordUrl = propertiesObj.get('discord_url')
-        let treasuryAddress = propertiesObj.get('treasury_address')
+        let github = propertiesObj.get('github')
+        let twitter = propertiesObj.get('twitter')
+        let discord = propertiesObj.get('discord')
+        let wallets = propertiesObj.get('wallets')
 
-        if (githubUrl) space.github_url = githubUrl.toString()
-        if (twitterUrl) space.twitter_url = twitterUrl.toString()
-        if (discordUrl) space.discord_url = discordUrl.toString()
-        if (treasuryAddress) space.treasury_address = treasuryAddress.toString()
+        if (github) space.github = github.toString()
+        if (twitter) space.twitter = twitter.toString()
+        if (discord) space.discord = discord.toString()
+        if (wallets && wallets.toArray().length > 0) space.wallet = wallets.toArray()[0].toString()
       }
     }
   }
