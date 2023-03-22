@@ -18,8 +18,8 @@ dataSources:
       abis:
         - name: ProxyFactory
           file: ./abis/ProxyFactory.json
-        - name: IExecutionStrategy
-          file: ./abis/IExecutionStrategy.json
+        - name: AvatarExecutionStrategy
+          file: ./abis/AvatarExecutionStrategy.json
       eventHandlers:
         - event: ProxyDeployed(address,address)
           handler: handleProxyDeployed

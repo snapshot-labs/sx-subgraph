@@ -1,42 +1,5 @@
-import { BigInt, Bytes, ethereum, ipfs, json, log } from '@graphprotocol/graph-ts'
+import { Bytes, ipfs, json } from '@graphprotocol/graph-ts'
 import { Space, ExecutionStrategy } from '../generated/schema'
-
-const TUPLE_PREFIX = '0x0000000000000000000000000000000000000000000000000000000000000020'
-const DEPLOY_PROXY_SIGNATURE = '(address,bytes,bytes32)'
-const SET_UP_AVATAR_SIGNATURE = 'bytes'
-const SET_UP_AVATAR_INIT_PARAMS_SIGNATURE = '(address,address,address[],uint256)'
-
-export function getAvatarQuorum(input: Bytes): BigInt | null {
-  let proxyDeployBytes = Bytes.fromByteArray(
-    Bytes.fromHexString(TUPLE_PREFIX + input.toHexString().slice(10))
-  )
-  let proxyDeployArguments = ethereum.decode(DEPLOY_PROXY_SIGNATURE, proxyDeployBytes)
-  if (!proxyDeployArguments) return null
-
-  let argsTuple = proxyDeployArguments.toTuple()
-  let initializer = argsTuple[1].toBytes()
-
-  let setUpBytes = Bytes.fromByteArray(Bytes.fromHexString(initializer.toHexString().slice(10)))
-  let setUpArguments = ethereum.decode(SET_UP_AVATAR_SIGNATURE, setUpBytes)
-  if (!setUpArguments) return null
-
-  let initParamsBytes = Bytes.fromByteArray(
-    Bytes.fromHexString(
-      TUPLE_PREFIX +
-        setUpArguments
-          .toBytes()
-          .toHexString()
-          .slice(2)
-    )
-  )
-  let initParams = ethereum.decode(SET_UP_AVATAR_INIT_PARAMS_SIGNATURE, initParamsBytes)
-  if (!initParams) return null
-
-  let initParamsTuple = initParams.toTuple()
-  let quorum = initParamsTuple[3].toBigInt()
-
-  return quorum
-}
 
 export function updateSpaceMetadata(space: Space, metadataUri: string): void {
   if (!metadataUri.startsWith('ipfs://')) return

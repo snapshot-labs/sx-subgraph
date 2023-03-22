@@ -1,7 +1,7 @@
 import { Address, BigDecimal, BigInt, Bytes, ipfs, json } from '@graphprotocol/graph-ts'
 import { JSON } from 'assemblyscript-json'
 import { ProxyDeployed } from '../generated/ProxyFactory/ProxyFactory'
-import { IExecutionStrategy } from '../generated/SpaceFactory/IExecutionStrategy'
+import { AvatarExecutionStrategy } from '../generated/ProxyFactory/AvatarExecutionStrategy'
 import {
   SpaceCreated,
   ProposalCreated,
@@ -11,7 +11,7 @@ import {
 } from '../generated/templates/Space/Space'
 import { Space as SpaceTemplate } from '../generated/templates'
 import { Space, ExecutionStrategy, Proposal, Vote, User } from '../generated/schema'
-import { getAvatarQuorum, updateSpaceMetadata } from './helpers'
+import { updateSpaceMetadata } from './helpers'
 
 const MASTER_SPACE = Address.fromString('0xB5E5c8a9A999Da1AABb2b45DC9F72F2be042e204')
 const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0x6F12C67cAd3e566B60A6AE0146761110F1Ea6Eb2')
@@ -20,16 +20,14 @@ export function handleProxyDeployed(event: ProxyDeployed): void {
   if (event.params.implementation.equals(MASTER_SPACE)) {
     SpaceTemplate.create(event.params.proxy)
   } else if (event.params.implementation.equals(MASTER_SIMPLE_QUORUM_AVATAR)) {
-    let executionStrategyContract = IExecutionStrategy.bind(event.params.proxy)
+    let executionStrategyContract = AvatarExecutionStrategy.bind(event.params.proxy)
     let typeResult = executionStrategyContract.try_getStrategyType()
-    if (typeResult.reverted) return
-
-    const quorum = getAvatarQuorum(event.transaction.input)
-    if (!quorum) return
+    let quorumResult = executionStrategyContract.try_quorum()
+    if (typeResult.reverted || quorumResult.reverted) return
 
     let executionStrategy = new ExecutionStrategy(event.params.proxy.toHexString())
-    executionStrategy.type = 'SimpleQuorumAvatar'
-    executionStrategy.quorum = new BigDecimal(quorum)
+    executionStrategy.type = typeResult.value
+    executionStrategy.quorum = new BigDecimal(quorumResult.value)
     executionStrategy.save()
   }
 }
