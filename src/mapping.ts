@@ -34,8 +34,6 @@ const VOTING_POWER_VALIDATION_STRATEGY = Address.fromString(
   '0x03d512E0165d6B53ED2753Df2f3184fBd2b52E48'
 )
 
-const METADATA_URI = 'ipfs://QmNtu2NvBTEwKRwZ48gPKHUH51UahK55dVZw4T2WUGZP39'
-
 export function handleProxyDeployed(event: ProxyDeployed): void {
   if (event.params.implementation.equals(MASTER_SPACE)) {
     SpaceTemplate.create(event.params.proxy)
