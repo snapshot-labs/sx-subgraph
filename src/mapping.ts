@@ -22,6 +22,7 @@ import {
   getProposalValidationStrategies,
   getProposalValidationStrategiesParams,
   updateSpaceMetadata,
+  updateStrategiesParsedMetadata,
 } from './helpers'
 
 const MASTER_SPACE = Address.fromString('0xB5E5c8a9A999Da1AABb2b45DC9F72F2be042e204')
@@ -32,6 +33,8 @@ const MASTER_SIMPLE_QUORUM_TIMELOCK = Address.fromString(
 const VOTING_POWER_VALIDATION_STRATEGY = Address.fromString(
   '0x03d512E0165d6B53ED2753Df2f3184fBd2b52E48'
 )
+
+const METADATA_URI = 'ipfs://QmNtu2NvBTEwKRwZ48gPKHUH51UahK55dVZw4T2WUGZP39'
 
 export function handleProxyDeployed(event: ProxyDeployed): void {
   if (event.params.implementation.equals(MASTER_SPACE)) {
@@ -96,7 +99,6 @@ export function handleSpaceCreated(event: SpaceCreated): void {
     }
   }
 
-  // NOTE: for now we are still using it as raw data, instead of URI
   space.strategies_metadata = event.params.votingStrategyMetadataURIs
   space.authenticators = event.params.authenticators.map<Bytes>((address) => address)
   space.proposal_count = 0
@@ -105,6 +107,7 @@ export function handleSpaceCreated(event: SpaceCreated): void {
   space.tx = event.transaction.hash
 
   updateSpaceMetadata(space, event.params.metadataURI)
+  updateStrategiesParsedMetadata(space.id, space.strategies_metadata)
 
   space.save()
 }
