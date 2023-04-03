@@ -6,6 +6,7 @@ type Space @entity {
   github: String!
   twitter: String!
   discord: String!
+  voting_power_symbol: String!
   wallet: String!
   controller: Bytes!
   voting_delay: Int!

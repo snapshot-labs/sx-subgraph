@@ -53,12 +53,14 @@ export function updateSpaceMetadata(space: Space, metadataUri: string): void {
     let github = propertiesObj.get('github')
     let twitter = propertiesObj.get('twitter')
     let discord = propertiesObj.get('discord')
+    let votingPowerSymbol = propertiesObj.get('voting_power_symbol')
     let wallets = propertiesObj.get('wallets')
     let executionStrategies = propertiesObj.get('executionStrategies')
 
     space.github = github ? github.toString() : ''
     space.twitter = twitter ? twitter.toString() : ''
     space.discord = discord ? discord.toString() : ''
+    space.voting_power_symbol = votingPowerSymbol ? votingPowerSymbol.toString() : 'VP'
     space.wallet = wallets && wallets.toArray().length > 0 ? wallets.toArray()[0].toString() : ''
 
     if (executionStrategies) {
