@@ -7,7 +7,8 @@
     "create-local": "graph create --node http://localhost:8020/ snapshot-labs/sx-subgraph",
     "remove-local": "graph remove --node http://localhost:8020/ snapshot-labs/sx-subgraph",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 snapshot-labs/sx-subgraph",
-    "deploy-goerli": "graph deploy --node https://api.thegraph.com/deploy/ snapshot-labs/sx-goerli"
+    "deploy-goerli": "graph deploy --node https://api.thegraph.com/deploy/ snapshot-labs/sx-goerli subgraph.goerli.yaml",
+    "deploy-sepolia": "graph deploy --node https://api.thegraph.com/deploy/ snapshot-labs/sx-sepolia subgraph.sepolia.yaml"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.26.0",
