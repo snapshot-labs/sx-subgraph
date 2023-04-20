@@ -12,6 +12,7 @@ import {
   VotingDelayUpdated,
   MinVotingDurationUpdated,
   MaxVotingDurationUpdated,
+  OwnershipTransferred,
 } from '../generated/templates/Space/Space'
 import { ProposalExecuted as TimelockProposalExecuted } from '../generated/templates/TimelockExecutionStrategy/TimelockExecutionStrategy'
 import {
@@ -317,6 +318,16 @@ export function handleMaxVotingDurationUpdated(event: MaxVotingDurationUpdated):
   }
 
   space.max_voting_period = event.params.newMaxVotingDuration.toI32()
+  space.save()
+}
+
+export function handleOwnershipTransferred(event: OwnershipTransferred): void {
+  let space = Space.load(event.address.toHexString())
+  if (space == null) {
+    return
+  }
+
+  space.controller = event.params.newOwner
   space.save()
 }
 
