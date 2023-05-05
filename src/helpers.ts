@@ -53,6 +53,7 @@ export function updateSpaceMetadata(space: Space, metadataUri: string): void {
   if (properties) {
     const propertiesObj = properties.toObject()
 
+    let delegation_api_url = propertiesObj.get('delegation_api_url')
     let github = propertiesObj.get('github')
     let twitter = propertiesObj.get('twitter')
     let discord = propertiesObj.get('discord')
@@ -60,6 +61,7 @@ export function updateSpaceMetadata(space: Space, metadataUri: string): void {
     let wallets = propertiesObj.get('wallets')
     let executionStrategies = propertiesObj.get('executionStrategies')
 
+    space.delegation_api_url = delegation_api_url ? delegation_api_url.toString() : ''
     space.github = github ? github.toString() : ''
     space.twitter = twitter ? twitter.toString() : ''
     space.discord = discord ? discord.toString() : ''
@@ -81,6 +83,7 @@ export function updateSpaceMetadata(space: Space, metadataUri: string): void {
       space.executors_types = []
     }
   } else {
+    space.delegation_api_url = ''
     space.github = ''
     space.twitter = ''
     space.discord = ''
