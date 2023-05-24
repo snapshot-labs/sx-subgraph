@@ -77,11 +77,11 @@ export function handleSpaceCreated(event: SpaceCreated): void {
   space.min_voting_period = event.params.minVotingDuration.toI32()
   space.max_voting_period = event.params.maxVotingDuration.toI32()
   space.quorum = new BigDecimal(new BigInt(0))
-  space.strategies = event.params.votingStrategies.map<Bytes>((strategy) => strategy.addy)
+  space.strategies = event.params.votingStrategies.map<Bytes>((strategy) => strategy.addr)
   space.strategies_params = event.params.votingStrategies.map<string>((strategy) =>
     strategy.params.toHexString()
   )
-  space.validation_strategy = event.params.proposalValidationStrategy.addy
+  space.validation_strategy = event.params.proposalValidationStrategy.addr
   space.validation_strategy_params = event.params.proposalValidationStrategy.params.toHexString()
 
   if (space.validation_strategy.equals(VOTING_POWER_VALIDATION_STRATEGY)) {
@@ -130,9 +130,9 @@ export function handleProposalCreated(event: ProposalCreated): void {
     return
   }
 
-  let proposalId = `${space.id}/${event.params.nextProposalId}`
+  let proposalId = `${space.id}/${event.params.proposalId}`
   let proposal = new Proposal(proposalId)
-  proposal.proposal_id = event.params.nextProposalId.toI32()
+  proposal.proposal_id = event.params.proposalId.toI32()
   proposal.space = space.id
   proposal.author = event.params.author.toHexString()
   proposal.execution_hash = event.params.proposal.executionPayloadHash.toHexString()
@@ -203,11 +203,11 @@ export function handleProposalUpdated(event: ProposalUpdated): void {
     return
   }
 
-  proposal.execution_strategy = event.params.newExecutionStrategy.addy
+  proposal.execution_strategy = event.params.newExecutionStrategy.addr
   proposal.execution_hash = event.params.newExecutionStrategy.params.toHexString()
 
   let executionStrategy = ExecutionStrategy.load(
-    event.params.newExecutionStrategy.addy.toHexString()
+    event.params.newExecutionStrategy.addr.toHexString()
   )
   if (executionStrategy !== null) {
     proposal.quorum = executionStrategy.quorum
@@ -275,10 +275,8 @@ export function handleVoteCreated(event: VoteCast): void {
 
   let vp = event.params.votingPower.toBigDecimal()
 
-  let vote = new Vote(
-    `${space.id}/${event.params.proposalId}/${event.params.voterAddress.toHexString()}`
-  )
-  vote.voter = event.params.voterAddress.toHexString()
+  let vote = new Vote(`${space.id}/${event.params.proposalId}/${event.params.voter.toHexString()}`)
+  vote.voter = event.params.voter.toHexString()
   vote.space = space.id
   vote.proposal = event.params.proposalId.toI32()
   vote.choice = choice
@@ -300,9 +298,9 @@ export function handleVoteCreated(event: VoteCast): void {
     proposal.save()
   }
 
-  let user = User.load(event.params.voterAddress.toHexString())
+  let user = User.load(event.params.voter.toHexString())
   if (user == null) {
-    user = new User(event.params.voterAddress.toHexString())
+    user = new User(event.params.voter.toHexString())
     user.proposal_count = 0
     user.vote_count = 0
     user.created = event.block.timestamp.toI32()
