@@ -11,7 +11,7 @@
     "deploy-studio": "graph deploy --studio sekhmet-sx-goerli"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.49.0",
+    "@graphprotocol/graph-cli": "0.50.1",
     "@graphprotocol/graph-ts": "0.29.1",
     "assemblyscript-json": "^1.1.0"
   }
