@@ -6,8 +6,8 @@ dataSources:
     name: ProxyFactory
     network: goerli
     source:
-      address: "0x12A1FfFFfd70677939D61d641eA043bc9060c718"
       abi: ProxyFactory
+      address: "0x12A1FfFFfd70677939D61d641eA043bc9060c718"
       startBlock: 9049740
     mapping:
       kind: ethereum/events
@@ -95,6 +95,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
+    network: goerli
   - name: ProposalMetadata
     kind: file/ipfs
     mapping:
@@ -107,6 +108,7 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
+    network: goerli
   - name: StrategiesParsedMetadataData
     kind: file/ipfs
     mapping:
@@ -119,3 +121,4 @@ templates:
       abis:
         - name: Space
           file: ./abis/Space.json
+    network: goerli
