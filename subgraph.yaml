@@ -92,7 +92,6 @@ templates:
       handler: handleSpaceMetadata
       entities:
         - SpaceMetadata
-        - ExecutionStrategy
       abis:
         - name: Space
           file: ./abis/Space.json

@@ -1,11 +1,6 @@
 import { Bytes, dataSource, json } from '@graphprotocol/graph-ts'
 import { JSON } from 'assemblyscript-json'
-import {
-  SpaceMetadata,
-  ExecutionStrategy,
-  ProposalMetadata,
-  StrategiesParsedMetadataData,
-} from '../generated/schema'
+import { SpaceMetadata, ProposalMetadata, StrategiesParsedMetadataData } from '../generated/schema'
 
 export function handleSpaceMetadata(content: Bytes): void {
   let spaceMetadata = new SpaceMetadata(dataSource.stringParam())
@@ -33,7 +28,8 @@ export function handleSpaceMetadata(content: Bytes): void {
     let discord = propertiesObj.get('discord')
     let votingPowerSymbol = propertiesObj.get('voting_power_symbol')
     let wallets = propertiesObj.get('wallets')
-    let executionStrategies = propertiesObj.get('executionStrategies')
+    let executionStrategies = propertiesObj.get('execution_strategies')
+    let executionStrategiesTypes = propertiesObj.get('execution_strategies_types')
 
     let delegation_api_type_value =
       delegation_api_type && !delegation_api_type.isNull() ? delegation_api_type.toString() : null
@@ -55,16 +51,13 @@ export function handleSpaceMetadata(content: Bytes): void {
     spaceMetadata.wallet =
       wallets && wallets.toArray().length > 0 ? wallets.toArray()[0].toString() : ''
 
-    if (executionStrategies) {
+    if (executionStrategies && executionStrategiesTypes) {
       spaceMetadata.executors = executionStrategies
         .toArray()
         .map<Bytes>((strategy) => Bytes.fromByteArray(Bytes.fromHexString(strategy.toString())))
-      spaceMetadata.executors_types = spaceMetadata.executors.map<string>((executor) => {
-        let executionStrategy = ExecutionStrategy.load(executor.toHexString())
-        if (executionStrategy === null) return 'unknown'
-
-        return executionStrategy.type
-      })
+      spaceMetadata.executors_types = executionStrategiesTypes
+        .toArray()
+        .map<string>((type) => type.toString())
     } else {
       spaceMetadata.executors = []
       spaceMetadata.executors_types = []
