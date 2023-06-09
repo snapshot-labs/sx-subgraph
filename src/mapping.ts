@@ -265,12 +265,17 @@ export function handleProposalExecuted(event: ProposalExecuted): void {
 
 export function handleProposalCancelled(event: ProposalCancelled): void {
   let proposal = Proposal.load(`${event.address.toHexString()}/${event.params.proposalId}`)
-  if (proposal == null) {
+  let space = Space.load(event.address.toHexString())
+
+  if (space == null || proposal == null) {
     return
   }
 
-  proposal.cancelled = true
+  space.proposal_count -= 1
+  space.vote_count = -proposal.vote_count
+  space.save()
 
+  proposal.cancelled = true
   proposal.save()
 }
 
