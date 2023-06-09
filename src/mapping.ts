@@ -7,6 +7,7 @@ import {
   ProposalCreated,
   ProposalUpdated,
   ProposalExecuted,
+  ProposalCancelled,
   VoteCast,
   MetadataURIUpdated,
   VotingDelayUpdated,
@@ -153,6 +154,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
   proposal.execution_time = 0
   proposal.executed = false
   proposal.completed = false
+  proposal.cancelled = false
 
   let executionStrategy = ExecutionStrategy.load(
     event.params.proposal.executionStrategy.toHexString()
@@ -257,6 +259,17 @@ export function handleProposalExecuted(event: ProposalExecuted): void {
         event.block.timestamp.toI32() + executionStrategy.timelock_delay.toI32()
     }
   }
+
+  proposal.save()
+}
+
+export function handleProposalCancelled(event: ProposalCancelled): void {
+  let proposal = Proposal.load(`${event.address.toHexString()}/${event.params.proposalId}`)
+  if (proposal == null) {
+    return
+  }
+
+  proposal.cancelled = true
 
   proposal.save()
 }
