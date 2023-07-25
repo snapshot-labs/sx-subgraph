@@ -1,14 +1,14 @@
 {
   "goerli": {
     "ProxyFactory": {
-      "address": "0x421ae9237ad736c639c051aaf90a471f4b09a836",
-      "startBlock": 9327827
+      "address": "0x4b4f7f64be813ccc66aefc3bfce2baa01188631c",
+      "startBlock": 9405311
     }
   },
   "sepolia": {
     "ProxyFactory": {
-      "address": "0x421ae9237ad736c639c051aaf90a471f4b09a836",
-      "startBlock": 3870922
+      "address": "0x4b4f7f64be813ccc66aefc3bfce2baa01188631c",
+      "startBlock": 3961351
     }
   },
   "linea-testnet": {
