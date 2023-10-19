@@ -48,11 +48,12 @@ export function getProposalValidationStrategiesParams(params: ethereum.Value): B
   return paramsTuple[1].toArray().map<Bytes>((strategy) => strategy.toTuple()[1].toBytes())
 }
 
-export function updateProposaValidationStrategy(
+export function updateProposalValidationStrategy(
   space: Space,
   validationStrategyAddress: Address,
   validationStrategyParams: Bytes,
-  metadataUri: string
+  metadataUri: string,
+  blockNumber: BigInt
 ): void {
   space.validation_strategy = validationStrategyAddress
   space.validation_strategy_params = validationStrategyParams.toHexString()
@@ -76,7 +77,11 @@ export function updateProposaValidationStrategy(
       space.voting_power_validation_strategy_strategies_params = []
     }
 
-    handleVotingPowerValidationMetadata(space.id, space.voting_power_validation_strategy_metadata)
+    handleVotingPowerValidationMetadata(
+      space.id,
+      space.voting_power_validation_strategy_metadata,
+      blockNumber
+    )
   } else {
     space.proposal_threshold = new BigDecimal(new BigInt(0))
     space.voting_power_validation_strategy_strategies = []
@@ -88,6 +93,7 @@ export function updateStrategiesParsedMetadata(
   spaceId: string,
   metadataUris: string[],
   startingIndex: i32,
+  blockNumber: BigInt,
   typeName: string = 'StrategiesParsedMetadata'
 ): void {
   for (let i = 0; i < metadataUris.length; i++) {
@@ -95,14 +101,14 @@ export function updateStrategiesParsedMetadata(
 
     let index = startingIndex + i
 
-    let uniqueId = `${spaceId}/${index}/${metadataUri}`
+    // blockNumber is required because sometimes it's called from IPFS handler so checking
+    // for existing entity is not accurate
+    // we need to do mapping based on index on UI to handle this
+    let uniqueId = `${spaceId}/${blockNumber}/${index}/${metadataUri}`
 
     // duplication becase AssemblyScript doesn't support unions and union types
     if (typeName == 'StrategiesParsedMetadata') {
-      let item = StrategiesParsedMetadata.load(uniqueId)
-      if (item) continue
-
-      item = new StrategiesParsedMetadata(uniqueId)
+      let item = new StrategiesParsedMetadata(uniqueId)
       item.space = spaceId
       item.index = index
 
@@ -114,10 +120,7 @@ export function updateStrategiesParsedMetadata(
 
       item.save()
     } else if (typeName == 'VotingPowerValidationStrategiesParsedMetadata') {
-      let item = VotingPowerValidationStrategiesParsedMetadata.load(uniqueId)
-      if (item) continue
-
-      item = new VotingPowerValidationStrategiesParsedMetadata(uniqueId)
+      let item = new VotingPowerValidationStrategiesParsedMetadata(uniqueId)
       item.space = spaceId
       item.index = index
 
@@ -132,12 +135,17 @@ export function updateStrategiesParsedMetadata(
   }
 }
 
-export function handleVotingPowerValidationMetadata(spaceId: string, metadataUri: string): void {
+export function handleVotingPowerValidationMetadata(
+  spaceId: string,
+  metadataUri: string,
+  blockNumber: BigInt
+): void {
   if (metadataUri.startsWith('ipfs://')) {
     let hash = metadataUri.slice(7)
 
     let context = new DataSourceContext()
     context.setString('spaceId', spaceId)
+    context.setBigInt('blockNumber', blockNumber)
     VotingPowerValidationStrategyMetadataTemplate.createWithContext(hash, context)
   }
 }

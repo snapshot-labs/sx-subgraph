@@ -144,6 +144,7 @@ export function handleStrategiesParsedMetadataData(content: Bytes): void {
 
 export function handleVotingPowerValidationStrategyMetadata(content: Bytes): void {
   let spaceId = dataSource.context().getString('spaceId')
+  let blockNumber = dataSource.context().getBigInt('blockNumber')
 
   let value = json.fromBytes(content)
   let obj = value.toObject()
@@ -155,6 +156,7 @@ export function handleVotingPowerValidationStrategyMetadata(content: Bytes): voi
     spaceId,
     strategies_metadata.toArray().map<string>((metadata) => metadata.toString()),
     0,
+    blockNumber,
     'VotingPowerValidationStrategiesParsedMetadata'
   )
 }

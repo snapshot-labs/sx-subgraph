@@ -31,7 +31,7 @@ import {
   ProposalMetadata as ProposalMetadataTemplate,
 } from '../generated/templates'
 import { Space, ExecutionStrategy, ExecutionHash, Proposal, Vote, User } from '../generated/schema'
-import { updateStrategiesParsedMetadata, updateProposaValidationStrategy } from './helpers'
+import { updateStrategiesParsedMetadata, updateProposalValidationStrategy } from './helpers'
 
 const MASTER_SPACE = Address.fromString('0xd9c46d5420434355d0E5Ca3e3cCb20cE7A533964')
 const MASTER_SIMPLE_QUORUM_AVATAR = Address.fromString('0x3813f3d97Aa2F80e3aF625605A31206e067FB2e5')
@@ -93,11 +93,12 @@ export function handleSpaceCreated(event: SpaceCreated): void {
     strategy.params.toHexString()
   )
 
-  updateProposaValidationStrategy(
+  updateProposalValidationStrategy(
     space,
     event.params.input.proposalValidationStrategy.addr,
     event.params.input.proposalValidationStrategy.params,
-    event.params.input.proposalValidationStrategyMetadataURI
+    event.params.input.proposalValidationStrategyMetadataURI,
+    event.block.number
   )
 
   space.strategies_metadata = event.params.input.votingStrategyMetadataURIs
@@ -113,7 +114,13 @@ export function handleSpaceCreated(event: SpaceCreated): void {
     SpaceMetadataTemplate.create(hash)
   }
 
-  updateStrategiesParsedMetadata(space.id, space.strategies_metadata, 0, 'StrategiesParsedMetadata')
+  updateStrategiesParsedMetadata(
+    space.id,
+    space.strategies_metadata,
+    0,
+    event.block.number,
+    'StrategiesParsedMetadata'
+  )
 
   space.save()
 }
@@ -460,6 +467,7 @@ export function handleVotingStrategiesAdded(event: VotingStrategiesAdded): void 
     space.id,
     strategiesMetadataUris,
     initialNextStrategy,
+    event.block.number,
     'StrategiesParsedMetadata'
   )
 
@@ -506,11 +514,12 @@ export function handleProposalValidationStrategyUpdated(
     return
   }
 
-  updateProposaValidationStrategy(
+  updateProposalValidationStrategy(
     space,
     event.params.newProposalValidationStrategy.addr,
     event.params.newProposalValidationStrategy.params,
-    event.params.newProposalValidationStrategyMetadataURI
+    event.params.newProposalValidationStrategyMetadataURI,
+    event.block.number
   )
 
   space.save()
