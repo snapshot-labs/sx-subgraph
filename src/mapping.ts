@@ -2,6 +2,7 @@ import { Address, BigDecimal, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { ProxyDeployed } from '../generated/ProxyFactory/ProxyFactory'
 import { AvatarExecutionStrategy } from '../generated/ProxyFactory/AvatarExecutionStrategy'
 import { TimelockExecutionStrategy } from '../generated/ProxyFactory/TimelockExecutionStrategy'
+import { AxiomExecutionStrategy } from '../generated/ProxyFactory/AxiomExecutionStrategy'
 import {
   SpaceCreated,
   ProposalCreated,
@@ -25,8 +26,12 @@ import {
   ProposalVetoed as TimelockProposalVetoed,
 } from '../generated/templates/TimelockExecutionStrategy/TimelockExecutionStrategy'
 import {
+  AxiomProposalExecuted
+} from '../generated/templates/AxiomExecutionStrategy/AxiomExecutionStrategy'
+import {
   Space as SpaceTemplate,
   TimelockExecutionStrategy as TimelockExecutionStrategyTemplate,
+  AxiomExecutionStrategy as AxiomExecutionStrategyTemplate,
   SpaceMetadata as SpaceMetadataTemplate,
   ProposalMetadata as ProposalMetadataTemplate,
 } from '../generated/templates'
@@ -526,6 +531,22 @@ export function handleProposalValidationStrategyUpdated(
 }
 
 export function handleTimelockProposalExecuted(event: TimelockProposalExecuted): void {
+  let executionHash = ExecutionHash.load(event.params.executionPayloadHash.toHexString())
+  if (executionHash === null) {
+    return
+  }
+
+  let proposal = Proposal.load(executionHash.proposal_id)
+  if (proposal === null) {
+    return
+  }
+
+  proposal.completed = true
+  proposal.execution_tx = event.transaction.hash
+  proposal.save()
+}
+
+export function handleAxiomProposalExecuted(event: AxiomProposalExecuted): void {
   let executionHash = ExecutionHash.load(event.params.executionPayloadHash.toHexString())
   if (executionHash === null) {
     return
